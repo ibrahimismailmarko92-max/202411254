@@ -1,0 +1,84 @@
+DROP TABLE IF EXISTS Works_With;
+DROP TABLE IF EXISTS Client;
+DROP TABLE IF EXISTS Branch;
+DROP TABLE IF EXISTS Employee;
+
+CREATE TABLE Employee (
+    emp_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    birth_date DATE,
+    sex CHAR(1),
+    salary NUMERIC(10,2),
+    branch_id INT,
+    super_id INT
+);
+
+CREATE TABLE Branch (
+    branch_id INT PRIMARY KEY,
+    branch_name VARCHAR(50),
+    mgr_id INT
+);
+
+CREATE TABLE Client (
+    client_id INT PRIMARY KEY,
+    client_name VARCHAR(100),
+    branch_id INT
+);
+
+CREATE TABLE Works_With (
+    emp_id INT,
+    client_id INT,
+    total_sales NUMERIC(10,2),
+    PRIMARY KEY (emp_id, client_id)
+);
+
+ALTER TABLE Employee
+ADD CONSTRAINT fk_employee_branch FOREIGN KEY (branch_id) REFERENCES Branch(branch_id);
+
+ALTER TABLE Employee
+ADD CONSTRAINT fk_employee_super FOREIGN KEY (super_id) REFERENCES Employee(emp_id);
+
+ALTER TABLE Branch
+ADD CONSTRAINT fk_branch_mgr FOREIGN KEY (mgr_id) REFERENCES Employee(emp_id);
+
+ALTER TABLE Client
+ADD CONSTRAINT fk_client_branch FOREIGN KEY (branch_id) REFERENCES Branch(branch_id);
+
+ALTER TABLE Works_With
+ADD CONSTRAINT fk_workswith_emp FOREIGN KEY (emp_id) REFERENCES Employee(emp_id);
+
+ALTER TABLE Works_With
+ADD CONSTRAINT fk_workswith_client FOREIGN KEY (client_id) REFERENCES Client(client_id);
+
+INSERT INTO Branch (branch_id, branch_name) VALUES
+(1, 'Corporate'),
+(2, 'Scranton'),
+(3, 'Stamford');
+
+INSERT INTO Employee VALUES
+(100, 'Jan', 'Levinson', '1961-05-11', 'F', 110000, 1, NULL),
+(101, 'Michael', 'Scott', '1964-03-15', 'M', 75000, 2, 100),
+(102, 'Josh', 'Porter', '1969-09-05', 'M', 78000, 3, 100),
+(103, 'Angela', 'Martin', '1971-06-25', 'F', 63000, 2, 101),
+(104, 'Andy', 'Bernard', '1973-07-22', 'M', 65000, 3, 101);
+
+UPDATE Branch SET mgr_id = 100 WHERE branch_id = 1;
+UPDATE Branch SET mgr_id = 101 WHERE branch_id = 2;
+UPDATE Branch SET mgr_id = 108 WHERE branch_id = 3;
+
+INSERT INTO Client VALUES
+(400, 'Dunmore Highschool', 2),
+(401, 'Lackawana Country', 2),
+(402, 'FedEx', 3),
+(403, 'John Daly Law, LLC', 3),
+(404, 'Scranton Whitepages', 2);
+
+INSERT INTO Works_With VALUES
+(101, 401, 267000),
+(104, 403, 5000),
+(102, 402, 22500),
+(101, 400, 55000);
+SELECT * FROM Employee
+SELECT * FROM Branch
+SELECT * FROM Works_With
